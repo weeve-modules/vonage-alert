@@ -4,7 +4,7 @@
 | -------------- | ------------------------------- |
 | Name           | Vonage Alert                    |
 | Version        | v0.0.2                          |
-| Dockerhub Link | [weevenetwork/weeve-vonage-alert](https://hub.docker.com/r/weevenetwork/vonage-alert) |
+| Dockerhub Link | [weevenetwork/vonage-alert](https://hub.docker.com/r/weevenetwork/vonage-alert) |
 | Authors        | Jakub Grzelak                   |
 
 
@@ -94,7 +94,7 @@ Moreover, other features required for establishing the inter-container communica
 ## Dependencies
 
 ```txt
-Flask==1.1.1
+Flask
 requests
 python-decouple==3.4
 ```
