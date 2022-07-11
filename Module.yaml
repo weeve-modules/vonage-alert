@@ -1,9 +1,118 @@
-version: 1.0.0
-name: Vonage
-description: Send alerts and notifications to your WhatsApp, Facebook Messenger and SMS channels.
-icon: https://icons-020-demo.s3.eu-central-1.amazonaws.com/mi_vonage_output.png
-type: output
-tags:
+displayName: 'Vonage'       # Display name for the module that will be displayed in the UI.
+moduleName: 'vonage-alert'        # Module name that will be used to reference the module, and uniquely identify the module and their versions.
+description: 'Send alerts and notifications to your WhatsApp, Facebook Messenger and SMS channels.'       # Module description that will be displayed in the UI.
+versionName: 'v1.0.0'                    # Module version name that will be used to reference the module version, and uniquely identify the module version with a common name.
+isPublic: true                          # Boolean value that indicates if the module is Public or Private.
+categories:                             # Array of category that will be used to group the module in the UI.
+  - 'Alert'
+type: 'Output'      # Module type (Input, Processing, Output) that will be used to group the module in the UI.
+image:
+  name: 'weevenetwork/vonage-alert'     # Image name from the docker registry.
+  tag: 'v1.0.0'                               # Image tag from the docker registry.
+  homepage: 'https://hub.docker.com/r/weevenetwork/vonage-alert'      # Image homepage from the docker registry.
+repository: 'https://github.com/weeve-modules/vonage-alert'     # Repository URL to source code.
+envs:                                   # Array of environment variables that will be used to configure the module. Also used to show related fields on the UI.
+  - name: Input Label                   # name of the field to be displayed on the UI.
+    key: INPUT_LABEL                # key to set in the environment variables.
+    description: The field to apply alert on.     # Description/helper text for the field.
+    value: 'temperature'                         # Value to be set in the environment variables.
+    type: 'text'                    # Type of the field. Possible values are: ['text', 'select', 'boolean', 'date', 'time', 'dateTime-local', 'number', 'multiple', 'CSV', 'file']
+    options: []
+    dependencies: []
+  - name: Alert Severity
+    key: ALERT_SEVERITY
+    description: Order of the results.
+    value: 'warning'
+    type: 'select'
+    options:
+      - warning
+      - alarming
+      - caution
+      - broken
+    dependencies: []
+  - name: Vonage API Channel
+    key: VONAGE_API
+    description: Vonage API Channel.
+    value: 'SMS'
+    type: 'select'
+    options:
+      - SMS
+      - WhatsApp
+      - Messenger
+    dependencies: []
+  - name: Vonage API Key
+    key: VONAGE_API_KEY
+    description: Your Vonage API key (see it on your Vonage dashboard).
+    value: 'vonage-api-key'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Vonage API Secret
+    key: VONAGE_API_SECRET
+    description: Your Vonage API secret (also available on your Vonage dashboard).
+    value: 'vonage-api-secret'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Vonage Brand Name
+    key: VONAGE_BRAND_NAME
+    description: The alphanumeric string that represents the name or number of the organization sending the message.
+    value: 'weeve-dataservice'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: To Number
+    key: TO_NUMBER
+    description: The phone number you are sending the message to. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.
+    value: '447700900000'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: SMS URL
+    key: SMS_URL
+    description: Vonage SMS API endpoint.
+    value: 'https://rest.nexmo.com/sms/json'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Messages API URL
+    key: MESSAGES_API_URL
+    description: Vonage WhatsApp Messages API endpoint.
+    value: 'https://api.nexmo.com/v0.1/messages'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Base URL
+    key: BASE_URL
+    description: Base Vonage API URL.
+    value: 'https://api.nexmo.com/'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: WhatsApp Number
+    key: WHATSAPP_NUMBER
+    description: The WhatsApp number that has been allocated to you by Vonage.
+    value: '1234567890'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Facebook Sender ID
+    key: FB_SENDER_ID
+    description: Facebook Messenger own form of ID for a business. Facebook Page (business) - Page ID.
+    value: '1234567890'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Facebook Recipient ID
+    key: FB_RECIPIENT_ID
+    description: Facebook Messenger own form of ID for a user. Facebook User (profile) - Page-Scoped ID (PSID).
+    value: '1234567890'
+    type: 'text'
+    options: []
+    dependencies: []
+ports: []
+mounts: []
+tags:                                   # Array of tags.
   - Vonage
   - output
   - alerts
@@ -12,111 +121,4 @@ tags:
   - Messenger
   - SMS
   - channels
-categories:
-  - id: category
-    name: Alert
-image:
-  name: weevenetwork/vonage-alert
-  tag: latest
-environments:
-  - key: INPUT_LABEL
-    description: The field to apply alert on
-    value: ''
-    default: temperature
-    type: string
-    name: Input Label
-  - key: INPUT_UNIT
-    description: The input unit
-    value: ''
-    default: Celsius
-    type: string
-    name: Input Unit
-  - key: ALERT_SEVERITY
-    description: Order of the results
-    value: ''
-    default: warning
-    type: enum
-    options:
-      - warning
-      - alarming
-      - caution
-      - broken
-    name: Alert Severity
-  - key: VONAGE_API
-    value: ''
-    default: SMS
-    type: enum
-    options:
-      - SMS
-      - WhatsApp
-      - Messenger
-    name: Vonage API Channel
-  - key: VONAGE_API_KEY
-    description: Your Vonage API key (see it on your Vonage dashboard).
-    value: ''
-    default: abcdefg
-    type: string
-    name: Vonage API Key
-  - key: VONAGE_API_SECRET
-    description: Your Vonage API secret (also available on your Vonage dashboard).
-    value: ''
-    default: abcdefg
-    type: string
-    name: Vonage API Secret
-  - key: VONAGE_BRAND_NAME
-    description: The alphanumeric string that represents the name or number of the organization sending the message.
-    value: ''
-    default: weeve dataservice
-    type: string
-    name: Vonage Brand Name
-  - key: TO_NUMBER
-    description: The phone number you are sending the message to. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.
-    value: ''
-    default: 447700900000
-    type: string
-    name: To Number
-  - key: SMS_URL
-    description: Vonage SMS API endpoint.
-    value: ''
-    default: https://rest.nexmo.com/sms/json
-    type: string
-    name: SMS URL
-  - key: MESSAGES_API_URL
-    description: Vonage WhatsApp Messages API endpoint.
-    value: ''
-    default: https://api.nexmo.com/v0.1/messages
-    type: string
-    name: Messages API URL
-  - key: BASE_URL
-    description: Base Vonage API URL.
-    value: ''
-    default: https://api.nexmo.com/
-    type: string
-    name: Base URL
-  - key: WHATSAPP_NUMBER
-    description: The WhatsApp number that has been allocated to you by Vonage.
-    value: ''
-    default: 1234567890
-    type: string
-    name: WhatsApp Number
-  - key: FB_SENDER_ID
-    description: Facebook Messenger own form of ID for a business. Facebook Page (business) - Page ID.
-    value: ''
-    default: 1234567890
-    type: string
-    name: Facebook Sender ID
-  - key: FB_RECIPIENT_ID
-    description: Facebook Messenger own form of ID for a user. Facebook User (profile) - Page-Scoped ID (PSID).
-    value: ''
-    default: 1234567890
-    type: string
-    name: Facebook Recipient ID
-commands: []
-document:
-  ports: []
-  volumes: []
-  restart_policy:
-    condition: on-failure
-    delay: 10s
-    max_attempts: 3
-    window: 120s
+icon: 'https://icons-020-demo.s3.eu-central-1.amazonaws.com/mi_vonage_output.png'    # Icon URL that will be displayed in the UI.
