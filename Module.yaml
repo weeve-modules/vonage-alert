@@ -1,47 +1,124 @@
-displayName: 'Module Boilerplate'       # Display name for the module that will be displayed in the UI.
-moduleName: 'module-boilerplate'        # Module name that will be used to reference the module, and uniquely identify the module and their versions.
-description: 'This is module boilerplate description.'       # Module description that will be displayed in the UI.
+displayName: 'Vonage'       # Display name for the module that will be displayed in the UI.
+moduleName: 'vonage-alert'        # Module name that will be used to reference the module, and uniquely identify the module and their versions.
+description: 'Send alerts and notifications to your WhatsApp, Facebook Messenger and SMS channels.'       # Module description that will be displayed in the UI.
 versionName: 'v1.0.0'                    # Module version name that will be used to reference the module version, and uniquely identify the module version with a common name.
 isPublic: true                          # Boolean value that indicates if the module is Public or Private.
 categories:                             # Array of category that will be used to group the module in the UI.
-  - 'CATEGORY_1'
-  - 'CATEGORY_2'
+  - 'Alert'
 type: 'Output'      # Module type (Input, Processing, Output) that will be used to group the module in the UI.
 image:
-  name: 'weevenetwork/module-boilerplate'     # Image name from the docker registry.
-  tag: 'latest'                               # Image tag from the docker registry.
-  homepage: 'https://hub.docker.com/weevenetwork/module-boilerplate'      # Image homepage from the docker registry.
-repository: 'https://github.com/weeve-modules/python-egress-module-boilerplate'     # Repository URL to source code.
+  name: 'weevenetwork/vonage-alert'     # Image name from the docker registry.
+  tag: 'v1.0.0'                               # Image tag from the docker registry.
+  homepage: 'https://hub.docker.com/r/weevenetwork/vonage-alert'      # Image homepage from the docker registry.
+repository: 'https://github.com/weeve-modules/vonage-alert'     # Repository URL to source code.
 envs:                                   # Array of environment variables that will be used to configure the module. Also used to show related fields on the UI.
-  - name: Setting 1                   # name of the field to be displayed on the UI.
-    key: ENVIRONMENT_1                # key to set in the environment variables.
-    description: Module setting 1     # Description/helper text for the field.
-    value: ''                         # Value to be set in the environment variables.
-    type: 'select'                    # Type of the field. Possible values are: ['text', 'select', 'boolean', 'date', 'time', 'dateTime-local', 'number', 'multiple', 'CSV', 'file']
-    options:                          # Options for the field if it is a select or multiple select. An array of string options
-      - option_A
-      - option_B
-      - option_C
-    dependencies:                     # List of dependencies for the field. This field is only displayed if all the dependencies are met. If
-      - key:                          # key of the dependency
-        value:                        # value of the dependency
-  - name: Setting 2
-    key: ENVIRONMENT_2
-    description: Module setting 2
-    value: ''
-    type: 'number'
-    dependencies:
-      - key: ENVIRONMENT_1
-        value: option_B
-ports:                                  # Array of ports that will be exposed by the module.
-  - container: 8080                     # Port number from the container.
-    host: 8080                          # Port number to map on the host.
-mounts:
-  - container: '/data'                  # Mount path from the container.
-    host: '/data'                       # Mount path to map on the host.
+  - name: Input Label                   # name of the field to be displayed on the UI.
+    key: INPUT_LABEL                # key to set in the environment variables.
+    description: The field to apply alert on.     # Description/helper text for the field.
+    value: 'temperature'                         # Value to be set in the environment variables.
+    type: 'text'                    # Type of the field. Possible values are: ['text', 'select', 'boolean', 'date', 'time', 'dateTime-local', 'number', 'multiple', 'CSV', 'file']
+    options: []
+    dependencies: []
+  - name: Alert Severity
+    key: ALERT_SEVERITY
+    description: Order of the results.
+    value: 'warning'
+    type: 'select'
+    options:
+      - warning
+      - alarming
+      - caution
+      - broken
+    dependencies: []
+  - name: Vonage API Channel
+    key: VONAGE_API
+    description: Vonage API Channel.
+    value: 'SMS'
+    type: 'select'
+    options:
+      - SMS
+      - WhatsApp
+      - Messenger
+    dependencies: []
+  - name: Vonage API Key
+    key: VONAGE_API_KEY
+    description: Your Vonage API key (see it on your Vonage dashboard).
+    value: 'vonage-api-key'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Vonage API Secret
+    key: VONAGE_API_SECRET
+    description: Your Vonage API secret (also available on your Vonage dashboard).
+    value: 'vonage-api-secret'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Vonage Brand Name
+    key: VONAGE_BRAND_NAME
+    description: The alphanumeric string that represents the name or number of the organization sending the message.
+    value: 'weeve-dataservice'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: To Number
+    key: TO_NUMBER
+    description: The phone number you are sending the message to. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.
+    value: '447700900000'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: SMS URL
+    key: SMS_URL
+    description: Vonage SMS API endpoint.
+    value: 'https://rest.nexmo.com/sms/json'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Messages API URL
+    key: MESSAGES_API_URL
+    description: Vonage WhatsApp Messages API endpoint.
+    value: 'https://api.nexmo.com/v0.1/messages'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Base URL
+    key: BASE_URL
+    description: Base Vonage API URL.
+    value: 'https://api.nexmo.com/'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: WhatsApp Number
+    key: WHATSAPP_NUMBER
+    description: The WhatsApp number that has been allocated to you by Vonage.
+    value: '1234567890'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Facebook Sender ID
+    key: FB_SENDER_ID
+    description: Facebook Messenger own form of ID for a business. Facebook Page (business) - Page ID.
+    value: '1234567890'
+    type: 'text'
+    options: []
+    dependencies: []
+  - name: Facebook Recipient ID
+    key: FB_RECIPIENT_ID
+    description: Facebook Messenger own form of ID for a user. Facebook User (profile) - Page-Scoped ID (PSID).
+    value: '1234567890'
+    type: 'text'
+    options: []
+    dependencies: []
+ports: []
+mounts: []
 tags:                                   # Array of tags.
-  - 'Python'
-  - 'Output'
-  - 'Boilerplate'
-  - 'Boilerplate 1.0.0'
-icon: 'https://some.url/to/icon.png'    # Icon URL that will be displayed in the UI.
+  - Vonage
+  - output
+  - alerts
+  - notifications
+  - WhatsApp
+  - Messenger
+  - SMS
+  - channels
+icon: 'https://icons-020-demo.s3.eu-central-1.amazonaws.com/mi_vonage_output.png'    # Icon URL that will be displayed in the UI.
