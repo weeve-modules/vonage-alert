@@ -1,149 +1,106 @@
-# Vonage Alert
+# Python Output Module Boilerplate
 
-|                |                                 |
-| -------------- | ------------------------------- |
-| Name           | Vonage Alert                    |
-| Version        | v0.0.2                          |
-| Dockerhub Link | [weevenetwork/vonage-alert](https://hub.docker.com/r/weevenetwork/vonage-alert) |
-| Authors        | Jakub Grzelak                   |
+|              |                                                                  |
+| ------------ | ---------------------------------------------------------------- |
+| name         | Python Output Module Boilerplate                             |
+| version      | v1.0.0                                                           |
+| GitHub       | [python-output-module-boilerplate](https://github.com/weeve-modules/python-egress-module-boilerplate) |
+| authors      | Jakub Grzelak, Nithin Saai                                       |
 
+***
+## Table of Content
 
-
-- [Vonage Alert](#vonage-alert)
+- [Python Output Module Boilerplate](#python-output-module-boilerplate)
+  - [Table of Content](#table-of-content)
   - [Description](#description)
-  - [Features](#features)
-  - [Supported Vonage Channels](#supported-vonage-channels)
-  - [Sample Notifications](#sample-notifications)
-  - [Environment Variables](#environment-variables)
-    - [Module Specific](#module-specific)
-    - [Set by the weeve Agent on the edge-node](#set-by-the-weeve-agent-on-the-edge-node)
+  - [Directory Structure](#directory-structure)
+    - [File Tree](#file-tree)
+  - [Module Variables](#module-variables)
+  - [As a module developer](#as-a-module-developer)
   - [Dependencies](#dependencies)
-  - [Input](#input)
-  - [Output](#output)
-  - [Docker Compose Example](#docker-compose-example)
-  - [Additional Vonage Documentation and Resources](#additional-vonage-documentation-and-resources)
+***
 
+## Description 
 
-## Description
+This is a Python Output Boilerplate module and it serves as a starting point for developers to build output modules for weeve platform and data services.
+Navigate to [As a module developer](#as-a-module-developer) to learn how to use this module. You can also explore our weeve documentation on [weeve Modules](https://docs.weeve.engineering/concepts/edge-applications/weeve-modules) and [module tutorials](https://docs.weeve.engineering/guides/how-to-create-a-weeve-module) to learn more details. 
 
-Vonage Alert is an alerting module responsible for sending notifications to Vonage API channels when triggered.
-Currently supported channels are SMS, WhatsApp and Facebook Messenger.
-Vonage Alert receives data and compares them to constraints set by a developer, if data are breaking the constraints then the module is sending a notification to a chosen Vonage channel.
-This module is containerized using Docker.
+## Directory Structure
 
+Most important resources:
 
-## Features
+| name              | description                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| src               | All source code related to the module (API and module code).                                           |
+| src/main.py       | Entry-point for the module.                                                                            |
+| src/api           | Code responsible for setting module's API and communication with weeve ecosystem.                      |
+| src/module        | Code related to the module's business logic. This is working directory for module developers.          |
+| docker            | All resources related to Docker (Dockerfile, docker-entrypoint.sh, docker-compose.yml).                |
+| example.env       | Holds examples of environment variables for running the module.                                        |
+| requirements.txt  | A list of module dependencies.                                                                         |
+| Module.yaml       | Module's YAML file that is later used by weeve platform Data Service Designer                          |
 
-* Egress data from data service
-* Send notification to Vonage Channel: SMS, WhatsApp or Facebook Messenger
+### File Tree
 
-## Supported Vonage Channels
+```bash
+├── src
+│   ├── api
+│   │   ├── __init__.py
+│   │   ├── log.py # log configurations
+│   │   ├── processing_thread.py # a separate thread responsible for triggering data outputting
+│   │   └── request_handler.py # handles module's API and receives data from a previous module
+│   ├── module
+│   │   ├── main.py # [*] main logic for the module
+│   │   └── validator.py # [*] validation logic for incoming data
+│   └── main.py # module entrypoint
+├── docker
+│   ├── .dockerignore
+│   ├── docker-compose.yml
+│   ├── docker-entrypoint.sh
+│   └── Dockerfile
+├── example.env # sample environment variables for the module
+├── Module.yaml # used by weeve platform to generate resource in Data Service Designer section
+├── makefile
+├── README.md
+├── example.README.md # README template for writing module documentation
+└── requirements.txt # module dependencies, used for building Docker image
+```
 
-* SMS
-* WhatsApp
-* Facebook Messenger
+## Module Variables
 
+There are 5 module variables that are required by each module to correctly function within weeve ecosystem. In development, these variables can overridden for testing purposes. In production, these variables are set by weeve Agent.
 
-## Sample Notifications
+| Environment Variables | type   | Description                                       |
+| --------------------- | ------ | ------------------------------------------------- |
+| MODULE_NAME           | string | Name of the module                                |
+| MODULE_TYPE           | string | Type of the module (Input, Processing, Output)    |
+| LOG_LEVEL             | string | Allowed log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL. Refer to `logging` package documentation. |
+| INGRESS_HOST          | string | Host to which data will be received               |
+| INGRESS_PORT          | string | Port to which data will be received               |
 
-| Type     | Text                                                                                               |
-| -------- | -------------------------------------------------------------------------------------------------- |
-| warning  | _WARNING for MachineName! Temperature reading shows 41.19 Celsius (< 49.0 Celsius)._               |
-| alarming | _ALARM from MachineName! Detected an alarming reading of Temperature: 100 Celsius (> 20 Celsius)._ |
-| caution  | _CAUTION for MachineName! Temperature is 100 Celsius (>= 20 Celsius)._                             |
-| broken   | _BROKEN device MachineName! Detected Temperature reading is -1.1 Celsius (<= -1 Celsius)._         |
+## As a module developer
 
+RECOMMENDED:
+Make sure you have [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
-## Environment Variables
+A module developer needs to add all the configuration and business logic.
 
-### Module Specific
+All the module logic can be written in the module package in `src/module` directory.
 
-The following module configurations can be provided in a data service designer section on weeve platform:
-
-
-| Name                  | Environment Variables | Type    | Description                                                                                                                                                                                                                    |
-| --------------------- | --------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Input Label           | INPUT_LABEL           | string  | The field to apply alert on, i.e: "temperature"                                                                                                                                                                                |
-| Input Unit            | INPUT_UNIT            | string  | I.e: "Celsius"                                                                                                                                                                                                                 |
-| Alert Severity        | ALERT_SEVERITY        | string  | Alert type: warning, alarming, caution, broken                                                                                                                                                                                 |
-| Vonage API            | VONAGE_API            | string  | Supported Vonage API channel: SMS, WhatsApp, Facebook Messenger                                                                                                                                                                |
-| Vonage API Key        | VONAGE_API_KEY        | string  | Your Vonage API key (see it on your Vonage dashboard).                                                                                                                                                                         |
-| Vonage API Secret     | VONAGE_API_SECRET     | string  | Your Vonage API secret (also available on your Vonage dashboard).                                                                                                                                                              |
-| Vonage Brand Name     | VONAGE_BRAND_NAME     | string  | The alphanumeric string that represents the name or number of the organization sending the message.                                                                                                                            |
-| To Number             | TO_NUMBER             | string  | The phone number you are sending the message to. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.                                                             |
-| SMS URL               | SMS_URL               | string  | Vonage SMS API endpoint: https://rest.nexmo.com/sms/json                                                                                                                                                                       |
-| Messages API URL      | MESSAGES_API_URL      | string  | Vonage WhatsApp Messages API endpoint. For production use the Messages API endpoint is https://api.nexmo.com/v0.1/messages. For sandbox testing the Messages API endpoint is https://messages-sandbox.nexmo.com/v0.1/messages. |
-| Base URL              | BASE_URL              | string  | For production use the base URL is https://api.nexmo.com/. For sandbox testing the base URL is https://messages-sandbox.nexmo.com/                                                                                             |
-| WhatsApp Number       | WHATSAPP_NUMBER       | string  | The WhatsApp number that has been allocated to you by Vonage. For sandbox testing the number is 14157386170.                                                                                                                   |
-| Facebook Sender ID    | FB_SENDER_ID          | string  | Facebook Messenger own form of ID for a business. Facebook Page (business) - Page ID                                                                                                                                           |
-| Facebook Recipient ID | FB_RECIPIENT_ID       | string  | Facebook Messenger own form of ID for a user. acebook User (profile) - Page-Scoped ID (PSID)                                                                                                                                   |
-
-
-Weeve agent will set SMS_URL, MESSAGES_API_URL and BASE_URL.
-Moreover, other features required for establishing the inter-container communication between modules in a data service are set by weeve agent.
-
-
-### Set by the weeve Agent on the edge-node
-
-| Environment Variables | type   | Description                            |
-| --------------------- | ------ | -------------------------------------- |
-| EGRESS_API_HOST       | string | HTTP ReST endpoint for the next module |
-| MODULE_NAME           | string | Name of the module                     |
-
+   * The files can me modified for the module
+      1. `module/validator.py`
+         * The function `data_validation` takes the JSON data received from the previous module.
+         * Incoming data can be validated here.
+         * Checks if data is of type permitted by a module (i.e. `dict` or `list`)>
+         * Checks if data contains required fields.
+         * Returns Error if data are not valid.
+      2. `module/module.py`
+         * The function `module_main` takes the JSON data received from the previous module.
+         * All the business logic about modules are written here.
+         * Returns error message.
 
 ## Dependencies
 
-```txt
-Flask
-requests
-python-decouple==3.4
-```
+The following are module dependencies:
 
-## Input
-
-Input to this module is JSON body single object:
-
-Example:
-```node
-{
-  temperature: 15,
-}
-```
-
-## Output
-
-This module does not produce any output except Slack notifications.
-
-## Docker Compose Example
-
-```yml
-version: "3"
-services:
-  vonage-alert:
-    image: weevenetwork/weeve-slack-alert
-    environment:
-      MODULE_NAME: vonage-alert
-      INPUT_LABEL: 'temperature'
-      INPUT_UNIT: 'Celsius'
-      ALERT_SEVERITY: 'broken'
-      VONAGE_API: 'WhatsApp'
-      VONAGE_API_KEY: 'abc123'
-      VONAGE_API_SECRET: 'abc123'
-      VONAGE_BRAND_NAME: 'Weeve Vonage Testing'
-      TO_NUMBER: '1234567890'
-      SMS_URL: 'https://rest.nexmo.com/sms/json'
-      MESSAGES_API_URL: 'https://messages-sandbox.nexmo.com/v0.1/messages'
-      BASE_URL: 'https://messages-sandbox.nexmo.com/'
-      WHATSAPP_NUMBER: '1234567890'
-      FB_SENDER_ID: '1234567890'
-      FB_RECIPIENT_ID: '1234567890'
-    ports:
-      - 5000:80
-```
-
-## Additional Vonage Documentation and Resources
-
-* SMS: [Vonage SMS API](https://developer.nexmo.com/messaging/sms/code-snippets/send-an-sms)
-* WhatsApp: [Vonage WhatsApp API](https://developer.nexmo.com/messages/code-snippets/whatsapp/send-text)
-* Facebook Messenger: [Vonage Facebook API](https://developer.nexmo.com/messages/concepts/facebook)
-* Sandbox Testing: [Vonage Sandbox](https://developer.nexmo.com/messages/concepts/messages-api-sandbox)
+* bottle
